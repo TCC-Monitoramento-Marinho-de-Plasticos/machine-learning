@@ -11,32 +11,30 @@ def main():
     image_path = sys.argv[1]
 
     try:
-        # Carrega modelo KNN e PCA treinados
+        # Carrega apenas o modelo KNN
         with open('knn_model.pkl', 'rb') as f:
             knn = pickle.load(f)
-        with open('pca_model.pkl', 'rb') as f:
-            pca = pickle.load(f)
     except Exception as e:
         print(f"Erro ao carregar o modelo: {e}")
         sys.exit(1)
 
     try:
+        # Carrega e processa a imagem
         img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
         if img is None:
             print("Erro: imagem não encontrada ou inválida")
             sys.exit(1)
 
         img = cv2.resize(img, (128, 128))
-        img = img / 255.0
-        img_flattened = img.flatten()
-
-        img_pca = pca.transform([img_flattened])
+        img = img / 255.0  # Normalização
+        img_flattened = img.flatten()  # Achata para 1D
     except Exception as e:
         print(f"Erro ao processar imagem: {e}")
         sys.exit(1)
 
     try:
-        prediction = knn.predict(img_pca)[0]
+        # Faz predição com KNN diretamente
+        prediction = knn.predict([img_flattened])[0]
         if prediction == 0:
             print("A imagem NÃO possui lixo")
         else:
