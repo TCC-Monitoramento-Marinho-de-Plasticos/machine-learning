@@ -35,8 +35,6 @@ def main():
     plt.title("Predição: " + label)
     plt.axis('off')
     plt.savefig(output_image_path)
-
-    # Retorna o caminho da imagem como saída
     print(output_image_path)
 
 if __name__ == "__main__":
