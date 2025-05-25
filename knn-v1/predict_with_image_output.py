@@ -3,18 +3,18 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-import os
 
 def main():
-    if len(sys.argv) < 2:
-        print("Erro: caminho da imagem não fornecido")
+    if len(sys.argv) < 3:
+        print("Erro: caminhos da imagem e do modelo não foram fornecidos")
         sys.exit(1)
 
     image_path = sys.argv[1]
+    model_path = sys.argv[2]
     output_image_path = "/tmp/output_prediction.png"
 
     try:
-        knn = pickle.load(open("knn_model.pkl", "rb"))
+        knn = pickle.load(open(model_path, "rb"))
     except Exception as e:
         print(f"Erro ao carregar o modelo: {e}")
         sys.exit(1)
