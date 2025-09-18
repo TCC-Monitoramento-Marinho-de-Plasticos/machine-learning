@@ -9,7 +9,7 @@ filename = 'knn_model.pkl'
 knn = pickle.load(open(filename, 'rb'))
 
 
-img_teste = cv2.imread('teste-images/no_plastic2.png', cv2.IMREAD_GRAYSCALE)
+img_teste = cv2.imread('plastic (1044).jpg', cv2.IMREAD_GRAYSCALE)
 img_teste = cv2.resize(img_teste, (128,128))
 img_teste = img_teste / 255.0
 gray_centered = img_teste - np.mean(img_teste, axis=0)
