@@ -1,23 +1,39 @@
-import pickle
 import cv2
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
+import pickle
 import numpy as np
+from skimage.feature import hog
 
-# Carregue o modelo do arquivo
-filename = 'knn_model.pkl'
-knn = pickle.load(open(filename, 'rb'))
+# carregar modelo salvo com pickle
+with open("svm_model.pkl", "rb") as f:
+    clf = pickle.load(f)
+
+def predict_single_image(image_path):
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    if img is None:
+        raise ValueError(f"Erro ao abrir a imagem: {image_path}")
+
+    img = cv2.resize(img, (256, 256)).astype("float32") / 255.0
+
+    features = hog(
+        img,
+        orientations=9,
+        pixels_per_cell=(8, 8),
+        cells_per_block=(2, 2),
+        block_norm="L2-Hys",
+        feature_vector=True
+    )
+
+    X = np.array([features])
+    pred = clf.predict(X)[0]
+
+    label = "plastic" if pred == 1 else "no-plastic"
+    return label
 
 
-img_teste = cv2.imread('teste-images/no_plastic2.png', cv2.IMREAD_GRAYSCALE)
-img_teste = cv2.resize(img_teste, (128,128))
-img_teste = img_teste / 255.0
-gray_centered = img_teste - np.mean(img_teste, axis=0)
-pca = PCA(n_components=50)
-transformed = pca.fit_transform(gray_centered)
-reconstructed = pca.inverse_transform(transformed)
-reconstructed += np.mean(img_teste, axis=0)
-img_flattened = reconstructed.flatten() 
 
-print("A imagem não possui lixo" if knn.predict([img_flattened]) == 0 else "A imagem possui Lixo")
-plt.imshow(img_teste, cmap='gray')
+# exemplo de uso
+image_path = "clean5.png"
+label = predict_single_image(image_path)
+
+print(f"Classe prevista: {label}")
+
